@@ -1,1 +1,1 @@
-worker: python TLG Y EXEL.py
+worker: python bot.py
