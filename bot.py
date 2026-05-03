@@ -130,43 +130,7 @@ async def vencidas(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # 📩 DETALLE UNA POR UNA
-    for row in vencidas_lista:
-
-        nombre = row["Cliente"]
-        fecha = str(row["Fecha Emisión"]).split(" ")[0]
-        dias = row["Días a vencer"]
-        vencimiento = str(row["Fecha Vencimiento"]).split(" ")[0]
-        estado = row["Alertas"]
-        servicio = str(row["TIPO DE CUNTA"])
-        cuenta = str(row["HGFHF"])
-
-        # 🎯 Emoji según servicio
-        if "spotify" in servicio.lower():
-            emoji_servicio = "🎵"
-        elif "hbo" in servicio.lower():
-            emoji_servicio = "🎬"
-        elif "netflix" in servicio.lower():
-            emoji_servicio = "🍿"
-        else:
-            emoji_servicio = "📦"
-
-        # 🚨 Emoji estado
-        if "VENCIDO" in estado.upper():
-            emoji_estado = "❌"
-        else:
-            emoji_estado = "⚠️"
-
-        mensaje = (
-            f"👤 *NOMBRE:* {nombre}\n"
-            f"📅 *FECHA:* {fecha}\n"
-            f"⏳ *DIAS:* {dias}\n"
-            f"📆 *VENCIMIENTO:* {vencimiento}\n"
-            f"{emoji_estado} *ESTADO:* {estado}\n"
-            f"{emoji_servicio} *SERVICIO:* {servicio}\n"
-            f"🔑 *CUENTA:* `{cuenta}`"
-        )
-
-        await update.message.reply_text(mensaje, parse_mode="Markdown")
+    
 
 ########################## /buscar cliente 
 
