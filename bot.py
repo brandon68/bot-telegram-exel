@@ -76,6 +76,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "👀 /ver\n"
         "➡️ Ver facturas activas\n\n"
 
+        "📄 /id\n"
+        "➡️ CHAT ID\n\n"
+
         "🚨 /vencidas\n"
         "➡️ Muestra facturas vencidas\n\n"
 
