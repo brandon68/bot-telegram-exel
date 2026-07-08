@@ -3,11 +3,49 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from datetime import datetime
 import nest_asyncio
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from datetime import datetime
+
 
 nest_asyncio.apply()
 
 TOKEN = "7119344534:AAFJP-0BM9OvIoo_bw2RDB5nfm0HVGBKKxQ"
 EXCEL = "RECORDATORIOS.xlsm"
+
+# ==========================
+# Aviso automático de vencimientos
+# ==========================
+async def revisar_vencimientos(context: ContextTypes.DEFAULT_TYPE):
+    df = leer_excel()
+
+    hoy = datetime.now().date()
+
+    for _, row in df.iterrows():
+
+        try:
+            fecha = pd.to_datetime(row["Fecha Vencimiento"]).date()
+        except:
+            continue
+
+        if fecha == hoy:
+
+            nombre = row["Cliente"]
+            servicio = row["TIPO DE CUNTA"]
+            cuenta = row["HGFHF"]
+
+            mensaje = (
+                "🚨 *HOY VENCE UNA CUENTA*\n\n"
+                f"👤 Cliente: *{nombre}*\n"
+                f"📦 Servicio: *{servicio}*\n"
+                f"📅 Vence: *{fecha.strftime('%d/%m/%Y')}*\n"
+                f"🔑 Cuenta:\n`{cuenta}`"
+            )
+
+            await context.bot.send_message(
+                chat_id=TU_CHAT_ID,
+                text=mensaje,
+                parse_mode="Markdown"
+            )
 
 
 # Leer Excel
@@ -281,7 +319,9 @@ async def tipo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(mensaje, parse_mode="Markdown")
 
-
+async def id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(str(update.effective_chat.id))
+    
 #################### agregar cliente 
 from openpyxl import load_workbook
 
@@ -335,12 +375,12 @@ async def agregar(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {e}")
-        
-        
+
 # Bot
 app = ApplicationBuilder().token(TOKEN).build()
 
 app.add_handler(CommandHandler("ver", ver))
+app.add_handler(CommandHandler("id", id))
 app.add_handler(CommandHandler("cuentas", cuentas))
 app.add_handler(CommandHandler("vacios", vacios))
 app.add_handler(CommandHandler("todo", todo))
@@ -351,4 +391,13 @@ app.add_handler(CommandHandler("agregar", agregar))
 app.add_handler(CommandHandler("start", start))
 
 print("Bot corriendo...")
+job_queue = app.job_queue
+
+# Revisar cada día a las 09:00
+from datetime import time
+
+job_queue.run_daily(
+    revisar_vencimientos,
+    time=time(hour=9, minute=0)
+)
 app.run_polling()
