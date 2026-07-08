@@ -393,6 +393,7 @@ app.add_handler(CommandHandler("tipo", tipo))
 app.add_handler(CommandHandler("agregar", agregar))
 app.add_handler(CommandHandler("start", start))
 
+print("VERSION 08/07/2026 - CAMBIO NUEVO")
 print("Bot corriendo...")
 job_queue = app.job_queue
 
